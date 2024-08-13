@@ -1,746 +1,290 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
-<head> 
-
+<head>
     <meta charset="UTF-8">
-
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Arizona Agriculture April 2024 </title>
-
-
-
-    <script src="https://kit.fontawesome.com/b0f29e9bfe.js" crossorigin="anonymous"></script>
-
-</head>
-
-<style>
-    @media screen and (max-width: 1080vw) {
-
-        .main-content,
-        .sidebar {
-
-            width: 100%;
-
-            margin: 0;
-
-            padding: 10px;
-
-        }
-
-    }
-
-    #pannable-container {
-
-        display: flex;
-
-        justify-content: center;
-
-        align-items: center;
-
-    }
-
-    * {
-
-        margin: 30;
-
-        padding: 0;
-
-        box-sizing: border-box;
-
-    }
-
-
-
-    body {
-
-        height: 100vw;
-
-        display: flex;
-
-        justify-content: center;
-
-        align-items: center;
-
-
-
-        font-family: sans-serif;
-
-        background-color: lightgray;
-
-    }
-
-
-
-    /* Book */
-
-
-
-    .book {
-
-        position: relative;
-
-        width: 50vw;
-
-        height: 90vw;
-
-        transition: transform 0.5s;
-
-        flex-wrap: wrap;
-
-        display: flex;
-
-        z-index: 5;
-
-        margin: auto;
-        /* Center the book horizontally */
-        margin-top: 5vh;
-
-        position: relative;
-        /* Relative positioning for button placement */
-
-    }
-
-
-
-    .paper {
-
-        position: absolute;
-
-        width: 100%;
-
-        height: 100%;
-
-        top: 0;
-
-        left: 0;
-
-        perspective: 1500px;
-
-
-
-    }
-
-
-
-    .front,
-
-    .back {
-
-        background-color: white;
-
-        position: absolute;
-
-        width: 100%;
-
-        height: 100%;
-
-        top: 0;
-
-        left: 0;
-
-        transform-origin: left;
-
-        transition: transform 0.5s;
-
-    }
-
-
-
-    .front {
-
-        z-index: 1;
-
-        backface-visibility: hidden;
-
-        border-left: 3px solid powderblue;
-
-    }
-
-
-
-    .back {
-
-        z-index: 0;
-
-    }
-
-
-
-    .front-content,
-
-    .back-content {
-
-        width: 100%;
-
-        height: 100%;
-
-        display: flex;
-
-        justify-content: center;
-
-        align-items: center;
-
-    }
-
-
-
-    .back-content {
-
-        transform: rotateY(180deg)
-    }
-
-
-
-    /* Paper flip effect */
-
-    .flipped .front,
-
-    .flipped .back {
-
-        transform: rotateY(-180deg);
-
-    }
-
-
-    #prevNextContainer {
+    <title></title>
+    <style>
+ body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.topnav {
+    height: 55px;
+    overflow: hidden;
+    background-color: Orange;
     display: flex;
-    justify-content: center; /* Center the buttons horizontally */
-    align-items: center; /* Align the buttons vertically */
+    align-items: center;
+    justify-content: center;
+}
+
+.topnav button,
+.topnav input[type="range"] {
+    margin: 0 10px;
+    padding: 10px;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+.topnav button {
+    background-color: #ddd;
+    color: black;
+    border-radius: 8px;
+}
+
+.topnav button:hover {
+    background-color: #ccc;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: calc(100vh - 55px); /* Adjust for topnav height */
+    overflow: hidden;
+}
+
+#flipbook-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    position: absolute; /* Positioning relative to the nearest positioned ancestor */
-    top: 5%; /* Adjust this percentage to move buttons above the zoom control */
-    z-index: 1010; /* Higher than zoom control to ensure it's on top */
+    max-width: 80%;
+    height: auto;
+    position: relative;
+    perspective: 1000px;
+    margin-top: 10px; /* Add some spacing below the nav bar */
+}
+
+#flipbook {
+    display: flex;
+    width: 80%;
+    max-width: 80%;
+    cursor: grab;
+    transition: transform 0.3s ease;
+}
+
+.page {
+    width: auto;
+    height: 90vh;
+    position: absolute;
+
+    backface-visibility: hidden;
+    transform-origin: left center;
+    transition: transform 0.6s;
+}
+#flipbook:active {
+    cursor: grabbing; /* Change cursor when actively dragging */
+}
+
+.flipped {
+    transform: rotateY(-180deg);
 }
 
 .control-button {
-    margin: 0 1vw; /* Adjust space between buttons */
+    margin: 0 20px;
     background-color: #ddd;
     border: none;
-    padding: 2vh 4vw; /* Adjust padding for button size */
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 1.8vh; /* Adjust font size */
-    border-radius: 0.8vh; /* Rounded corners for aesthetics */
+    font-size: 18px;
+    border-radius: 8px;
+}
+.page img {
+            border: 5px solid #000; /* Add a black border around each image */
+            height: 90%;
 }
 
-
-
-    /* Paper stack order */
-
-    #p1 {
-
-        z-index: 3;
-
-    }
-
-
-
-    #p2 {
-
-        z-index: 2;
-
-    }
-
-
-
-    #p3 {
-
-        z-index: 1;
-
-    }
-
-    /* Style for the zoom control container */
-
-    .zoom-control {
-    text-align: center;
-    background-color: #f4f4f4;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1000;
-    position: absolute;
-    top: 12%; /* Adjust this value as needed to position vertically */
-    left: 50%; /* Center horizontally relative to the book */
-    transform: translateX(-50%); /* Center the zoom control on the book */
-    width: 80%;
-    }
-
-
-
-
-    /* Style for the label */
-
-    .zoom-control label {
-
-        font-weight: bold;
-        /* Make the label text bold */
-
-        margin-right: 10px;
-        /* Space between label and slider */
-
-    }
-
-
-
-    /* Style for the range input (zoom slider) */
-
-    #zoom-slider {
-
-        top: 20px;
-
-        width: 50%;
-        /* Control the width of the slider */
-
-        -webkit-appearance: none;
-        /* Override default appearance */
-
-        appearance: none;
-
-        height: 15px;
-        /* Height of the slider */
-
-        background: #ddd;
-        /* Background of the slider */
-
-        outline: none;
-        /* Remove the outline */
-
-        opacity: 0.7;
-        /* Slightly transparent */
-
-        -webkit-transition: .2s;
-        /* Transition for the slider handle */
-
-        transition: opacity .2s;
-
-    }
-
-
-
-    /* Style for the range input (zoom slider) when hovered */
-
-    #zoom-slider:hover {
-
-        opacity: 1;
-        /* Fully opaque on hover */
-
-    }
-
-
-
-    /* Style for the slider thumb (handle) */
-
-    #zoom-slider::-webkit-slider-thumb {
-
-        -webkit-appearance: none;
-        /* Override default appearance */
-
-        appearance: none;
-
-        width: 25px;
-        /* Width of the handle */
-
-        height: 25px;
-        /* Height of the handle */
-
-        background: #4CAF50;
-        /* Green background */
-
-        cursor: pointer;
-        /* Cursor changes to pointer */
-
-        border-radius: 50%;
-        /* Circular handle */
-
-    }
-
-
-
-    #zoom-slider::-moz-range-thumb {
-
-        top: 500px;
-
-        width: 25px;
-        /* Width of the handle */
-
-        height: 25px;
-        /* Height of the handle */
-
-        background: #4CAF50;
-        /* Green background */
-
-        cursor: pointer;
-        /* Cursor changes to pointer */
-
-        border-radius: 50%;
-        /* Circular handle */
-
-
-
-    }
-</style>
-
-
-
-<div id="prevNextContainer">
-    <button id="prev-btn" class="control-button">Previous</button>
-    <button id="next-btn" class="control-button">Next</button>
-</div>
-
-<div class="zoom-control">
+.pseudo-iframe {
+
+
+border: 1px solid #ccc;
+/* iFrame-like border */
+overflow: auto;
+/* Scrollbar if content overflows */
+position: relative;
+/* Positioning context for the content */
+background: grey;
+/* Background color to mimic an iframe's default styling */
+box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+/* Optional: adds shadow for depth */
+}
+
+.iframe-content {
+padding: 20px;
+/* Padding around the content */
+height: 190%;
+/* Full height of the container */
+}
+           
+
+    
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <button id="prev-btn" class="control-button">Previous Page</button>
+    <button id="next-btn" class="control-button">Next Page</button>
     <label for="zoom-slider">Zoom:</label>
     <input type="range" id="zoom-slider" min="50" max="600" value="100">
 </div>
+<div class="pseudo-iframe">
+    <div class="iframe-content">
 
-
-
-<div id="pannable-container">
-
-    <div id="pannable-content">
-
-        <div class="container">
-
-            <!-- Book -->
-
-            <div id="book" class="book">
-
-                <!-- Paper 1 -->
-
-                <div id="p1" class="paper">
-
-                    <div class="front">
-
-                        <div id="f1" class="front-content">
-
-                            <img src="https://i.ibb.co/NKyRmBT/pg1.png" alt="pg-1" border="0" 
-
-                                style="height:95%; width: 100%">
-
-                        </div>
-
-                    </div>
-
-                    <div class="back">
-
-                        <div id="b1" class="back-content">
-
-                            <img src="https://i.ibb.co/34YZLxC/pg2.png" alt="pg-2" border="0" 
-                            
-                            style="height:95%; width: 100%">
-                            
-                        
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Paper 2 -->
-
-                <div id="p2" class="paper">
-
-                    <div class="front">
-
-                        <div id="f2" class="front-content">
-
-                            <img src="https://i.ibb.co/60mgwdJ/pg-3.png" alt="pg-3" border="0"
-                            
-                            style="height:95%; width: 100%">
-                            
-                            
-                        </div>
-                    </div>
-
-                    <div class="back">
-
-                        <div id="b2" class="back-content">
-                            <img src="https://i.ibb.co/Q9PyhJB/pg4.png" alt="pg-4" border="0" 
-                            style="height:95%;width:100%">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Paper 3 -->
-
-                <div id="p3" class="paper">
-
-                    <div class="front">
-
-                        <div id="f3" class="front-content">
-
-                            <img src="https://i.ibb.co/FhScHt8/pg5.png" alt="pg-5" border="0" 
-                                
-                            
-                            style="height:95%;width:100%">
-
-                        </div>
-
-                    </div>
-
-                    <div class="back">
-
-                        <div id="b3" class="back-content">
-
-                            <img src="https://i.ibb.co/YWDw2Br/pg6.png" alt="pg-6" border="0" 
-                            
-                            
-                            
-                            style="height:95%;width:100%">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Paper 4 -->
-
-                <div id="p4" class="paper">
-
-                    <div class="front">
-
-                        <div id="f4" class="front-content">
-
-                            <img src="https://i.ibb.co/xGjMD0g/pg7.png" alt="pg-7" border="0" 
-
-
-                            style="height:95%;width:100%">
-
-                        </div>
-
-                    </div>
-
-                    <div class="back">
-
-                        <div id="b4" class="back-content">
-
-                            <img src="https://i.ibb.co/Ny9GWy1/pg8.png" alt="pg-8" border="0" 
-                            
-                            style="height:95%;width:100%">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+<div id="container">
+    <div id="flipbook-container">
+        <div id="flipbook">
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921599869_a6147dab9b_o.png" style="height:90vh;width:60vh;" />
             </div>
-
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921694850_45203f9b84_o.png" alt="pg-2" style="height:90vh;width:60vh;" />
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921599874_8ec4bff39a_o.png" alt="pg-3" style="height:90vh;width:60vh;">
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921599879_72cb07da6e_o.png" alt="pg-4" style="height:90vh;width:60vh;">
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921599909_490bfb654f_o.png" alt="pg-5" style="height:90vh;width:60vh;">
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921242301_7a692975d4_o.png" alt="pg-6" style="height:90vh;width:60vh;">
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53920354372_e4bd0cbc20_o.png" alt="pg-7" style="height:90vh;width:60vh;">
+            </div>
+            <div class="page">
+                <img src="https://live.staticflickr.com/65535/53921694940_875aaff44a_o.png" alt="pg-8" style="height:90vh;width:60vh;">
+            </div>
+            
+            
         </div>
-
-
-
-        </body>
-
-</html>
+    </div>
+</div>
+</div>
+</div>
 
 <script>
+let currentPage = 0;
+const pages = document.querySelectorAll('.page');
+const totalPages = pages.length;
+const flipbook = document.getElementById('flipbook');
 
-    // References to DOM Elements 
+// Set initial z-index values for each page
+pages.forEach((page, index) => {
+    page.style.zIndex = totalPages - index;
+});
 
-    const prevBtn = document.querySelector("#prev-btn");
-
-    const nextBtn = document.querySelector("#next-btn");
-
-    const book = document.querySelector("#book");
-
-    const papers = [document.querySelector("#p1"), document.querySelector("#p2"), document.querySelector("#p3"), document.querySelector("#p4"), document.querySelector("#p5")];
-
-    const pannableContent = document.getElementById('pannable-content');
-
-    const zoomSlider = document.getElementById('zoom-slider');
-
-
-
-    // Variables for panning and zooming 
-
-    let zoomFactor = 1;
-
-    let panX = 0;
-
-    let panY = 0;
-
-    let isDragging = false;
-
-    let startX = 0;
-
-    let startY = 0;
-
-
-
-    // Variables for book navigation 
-
-    let currentLocation = 1;
-
-    const numOfPapers = papers.length;
-
-    const maxLocation = numOfPapers + 1;
-
-
-
-    // Event Listener for zoom control 
-
-    zoomSlider.addEventListener('input', () => {
-
-        zoomFactor = zoomSlider.value / 100;
-
-        updateZoomPan();
-
-    });
-
-
-
-    // Function to apply zoom and pan 
-
-    function updateZoomPan() {
-
-        pannableContent.style.transform = `scale(${zoomFactor}) translate(${panX}px, ${panY}px)`;
-
-        if (isDragging) {
-
-            requestAnimationFrame(updateZoomPan);
-
+function flipToPage(pageNumber) {
+    if (pageNumber > currentPage) {
+        for (let i = currentPage; i < pageNumber; i++) {
+            pages[i].classList.add('flipped');
         }
-
+    } else if (pageNumber < currentPage) {
+        for (let i = currentPage - 1; i >= pageNumber; i--) {
+            pages[i].classList.remove('flipped');
+        }
     }
+    currentPage = pageNumber;
+}
 
+document.getElementById('prev-btn').addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent default browser behavior
+    if (currentPage > 0) {
+        flipToPage(currentPage - 1);
+    }
+});
 
+document.getElementById('next-btn').addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent default browser behavior
+    if (currentPage < totalPages - 1) {
+        flipToPage(currentPage + 1);
+    }
+});
 
-    // Initial update for zoom and pan 
+// Zoom and Pan Functionality
+const zoomSlider = document.getElementById('zoom-slider');
+let zoomFactor = 1;
+let offsetX = 0;
+let offsetY = 0;
 
+function updateZoomPan() {
+    const transform = `scale(${zoomFactor}) translate(${offsetX}px, ${offsetY}px)`;
+    flipbook.style.transform = transform;
+}
+
+// Event Listener for zoom control
+zoomSlider.addEventListener('input', () => {
+    zoomFactor = zoomSlider.value / 100;
     updateZoomPan();
+});
 
+// Add panning functionality for mouse events
+let isPanning = false;
+let startX = 0;
+let startY = 0;
 
+flipbook.addEventListener('mousedown', (e) => {
+    // Check if the target is the zoom slider to prevent panning
+    if (e.target.closest('input[type="range"]')) return;
 
-    // Mouse events for dynamic panning 
+    e.preventDefault(); // Prevent default browser behavior
+    isPanning = true;
+    startX = e.clientX - offsetX;
+    startY = e.clientY - offsetY;
+    flipbook.style.cursor = 'grabbing';
+});
 
-    pannableContent.addEventListener('mousedown', (e) => {
-
-        e.preventDefault(); // Prevent default action 
-
-        isDragging = true;
-
-        startX = e.clientX - panX;
-
-        startY = e.clientY - panY;
-
-        pannableContent.style.cursor = 'grabbing';
-
-        requestAnimationFrame(updateZoomPan);
-
-    });
-
-
-
-    document.addEventListener('mouseup', () => {
-
-        isDragging = false;
-
-        pannableContent.style.cursor = 'grab';
-
-    });
-
-
-
-    document.addEventListener('mousemove', (e) => {
-
-        if (isDragging) {
-
-            e.preventDefault(); // Prevent default action during dragging 
-
-            panX = e.clientX - startX;
-
-            panY = e.clientY - startY;
-
-            pannableContent.style.cursor = 'grabbing';
-
-        }
-
-    });
-
-
-
-
-
-    // Event Listeners for navigation buttons 
-
-    prevBtn.addEventListener("click", goPrevPage);
-
-    nextBtn.addEventListener("click", goNextPage);
-
-
-
-    // Functions for page flipping 
-
-    function openBook() {
-
-        book.style.transform = "translateX(50%)";
-
-        prevBtn.style.transform = "translateX(0px)";
-
-        nextBtn.style.transform = "translateX(0px)";
-
+document.addEventListener('mousemove', (e) => {
+    if (isPanning) {
+        offsetX = e.clientX - startX;
+        offsetY = e.clientY - startY;
+        updateZoomPan();
     }
+});
 
+document.addEventListener('mouseup', () => {
+    isPanning = false;
+    flipbook.style.cursor = 'grab';
+});
 
+// Add panning functionality for touch events
+let isTouchPanning = false;
+let touchStartX = 0;
+let touchStartY = 0;
 
-    function closeBook(isAtBeginning) {
+flipbook.addEventListener('touchstart', (e) => {
+    // Check if the target is the zoom slider to prevent panning
+    if (e.target.closest('input[type="range"]')) return;
 
-        book.style.transform = isAtBeginning ? "translateX(0%)" : "translateX(0%)";
+    isTouchPanning = true;
+    const touch = e.touches[0];
+    touchStartX = touch.clientX - offsetX;
+    touchStartY = touch.clientY - offsetY;
+});
 
-        prevBtn.style.transform = "translateX(0px)";
-
-        nextBtn.style.transform = "translateX(0px)";
-
+flipbook.addEventListener('touchmove', (e) => {
+    if (isTouchPanning) {
+        const touch = e.touches[0];
+        offsetX = touch.clientX - touchStartX;
+        offsetY = touch.clientY - touchStartY;
+        updateZoomPan();
     }
+});
 
+flipbook.addEventListener('touchend', () => {
+    isTouchPanning = false;
+});
 
-
-    function goNextPage() {
-    if (currentLocation < maxLocation) {
-        // Open book for first page
-        if (currentLocation === 1) {
-            openBook();
-        }
-
-        // Turn page
-        papers[currentLocation - 1].classList.add("flipped");
-        papers[currentLocation - 1].style.zIndex = currentLocation;
-
-        // Close book for last page
-        if (currentLocation === numOfPapers) {
-            closeBook(false);
-        }
-
-        currentLocation++;
-    }
-}
-
-function goPrevPage() {
-    if (currentLocation > 1) {
-        currentLocation--;
-
-        // If moving back from the last page
-        if (currentLocation === numOfPapers) {
-            openBook();
-        }
-
-        // If moving back to the first page
-        if (currentLocation === 1) {
-            closeBook(true);
-        }
-
-        // Turn page back
-        papers[currentLocation - 1].classList.remove("flipped");
-        papers[currentLocation - 1].style.zIndex = numOfPapers - currentLocation + 1;
-    }
-}
-
+// Initial update for zoom
+updateZoomPan();
 
 </script>
+</body>
+</html>
